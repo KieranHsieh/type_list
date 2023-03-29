@@ -79,3 +79,10 @@ tl.one_of(kt::func<std::is_const>)              // True
 tl.one_of(kt::func<std::is_volatile>)           // True
 kt::type_list<>.one_of(kt::func<std::is_const>) // False
 ```
+
+## Equality
+```cxx
+kt::type_list<int, double> == kt::type_list<int, double>;   // True
+kt::type_list<int, double> == kt::type_list<int>;           // False
+kt::type_list<int, double> != kt::type_list<int>;           // True
+```
