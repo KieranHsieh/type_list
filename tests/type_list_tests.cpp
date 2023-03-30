@@ -142,3 +142,13 @@ TEST_CASE("type_list can remove elements", "[modifiers]") {
 
     REQUIRE(kt::type_list<int, double, short, float>.remove(kt::index<1>, kt::index<3>) == kt::type_list<int, float>);
 }
+
+TEST_CASE("type_list can pop front and back elements", "[modifiers]") {
+    REQUIRE(kt::type_list<>.pop_back() == kt::type_list<>);
+    REQUIRE(kt::type_list<int>.pop_back() == kt::type_list<>);
+    REQUIRE(kt::type_list<int, float>.pop_back() == kt::type_list<int>);
+
+    REQUIRE(kt::type_list<>.pop_front() == kt::type_list<>);
+    REQUIRE(kt::type_list<int>.pop_front() == kt::type_list<>);
+    REQUIRE(kt::type_list<int, float>.pop_front() == kt::type_list<float>);
+}

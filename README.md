@@ -55,6 +55,8 @@ static constexpr tl = kt::type_list<int, double, int>;
 tl.remove(kt::tag<int>)                // kt::type_list<double>
 tl.remove(kt::index<0>)                // kt::type_list<double, int>
 tl.remove(kt::index<1>, kt::index<3>)  // kt::type_list<int>
+tl.pop_back()                          // kt::type_list<int, double>
+tl.pop_front()                         // kt::type_list<double, int>
 ```
 
 ## Metafunctions

@@ -187,6 +187,19 @@ namespace kt {
         template<typename... TS>
         using type_list_first_type_t = typename type_list_first_type<TS...>::type;
 
+        template<typename T>
+        struct type_list_pop_front {
+            using type = T;
+        };
+
+        template<typename T, typename... TS>
+        struct type_list_pop_front<type_list_t<T, TS...>> {
+            using type = type_list_t<TS...>;
+        };
+
+        template<typename T>
+        using type_list_pop_front_t = typename type_list_pop_front<T>::type;
+
         template<size_t I, typename = std::make_index_sequence<I>>
         struct type_list_element_impl;
 
@@ -212,6 +225,7 @@ namespace kt {
         struct type_list_apply_range_tag { };
         struct type_list_filter_tag { };
         struct type_list_filter_range_tag { };
+        struct type_list_pop_back_tag { };
 
         template<typename T, typename TL, typename TAG, typename = std::make_index_sequence<TL().size()>>
         struct type_list_with_iseq;
@@ -239,6 +253,9 @@ namespace kt {
 
         template<size_t S, size_t E, template<typename> class F, typename TL>
         using type_list_filter_range_t = typename type_list_with_iseq<ranged_func_t<S, E, F>, TL, type_list_filter_range_tag>::type;
+
+        template<typename TL>
+        using type_list_pop_back_t = typename type_list_with_iseq<void, TL, type_list_pop_back_tag>::type;
     }
     /**
      * @endcond
@@ -276,6 +293,18 @@ namespace kt {
          * @note Calling this function give a compiler error if the type list is empty
          */
         constexpr auto back() const { return tag_t<decltype((detail::declfwd<TS>(), ...))>(); }
+
+        /**
+         * @brief Returns a type list without the first element of the calling type list
+         *
+         */
+        constexpr auto pop_front() const { return detail::type_list_pop_front_t<type_list_t<TS...>>(); }
+
+        /**
+         * @brief Returns a type list without the last element of the calling type list
+         *
+         */
+        constexpr auto pop_back() const { return detail::type_list_pop_back_t<type_list_t<TS...>>(); }
 
         /**
          * @brief Returns a tag_t holding the ith element of the type list, where i is a 0-based index.
@@ -654,6 +683,11 @@ namespace kt {
                                    typename std::conditional<F<TS>::value,
                                                              tag_t<TS>,
                                                              std::conditional_t<(IS >= S && IS < E), tag_t<ignore_t>, tag_t<TS>>>::type()));
+        };
+
+        template<typename... TS, size_t... IS>
+        struct type_list_with_iseq<void, type_list_t<TS...>, type_list_pop_back_tag, std::index_sequence<IS...>> {
+            using type = decltype((type_list_t<>() + ... + std::conditional_t<(IS == sizeof...(IS) - 1), tag_t<ignore_t>, tag_t<TS>>()));
         };
     }
     /**
